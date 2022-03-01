@@ -11,9 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Flutter Widget",
-      theme: ThemeData(
-          primarySwatch: Colors.teal
-      ),
+      theme: ThemeData(primarySwatch: Colors.teal),
       home: MyHomePage(),
     );
   }
@@ -36,18 +34,51 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         constraints: BoxConstraints.expand(),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text("View A"),
-            Text("View B"),
-            Text("View C")
+            Expanded(
+                flex: 1,
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                          child: Container(
+                            color: Colors.red,
+                            child: Center(child: Text("A")),
+                          )
+                      ),
+                      Expanded(
+                          child: Container(
+                            color: Colors.purple,
+                            child: Center(child: Text("B")),
+                          )
+                      ),
+                      Expanded(
+                          child: Container(
+                            color: Colors.lime,
+                            child: Center(child: Text("C")),
+                          )
+                      ),
+                      Expanded(
+                          child: Container(
+                            color: Colors.green,
+                            child: Center(child: Text("D")),
+                          )
+                      )
+                    ],
+                  ),
+                )
+            ),
+            Expanded(
+                flex: 1,
+                child: Container(
+                  color: Colors.blue,
+                )
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-
-
