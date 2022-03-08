@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget19022022/calculator_page.dart';
+import 'package:flutter_widget19022022/demo_listview.dart';
 import 'package:flutter_widget19022022/orientation_widget.dart';
 import 'package:flutter_widget19022022/relation_widget.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Flutter Widget",
       theme: ThemeData(primarySwatch: Colors.teal),
-      home: CalculatorPage(),
+      home: DemoListView(),
     );
   }
 }
