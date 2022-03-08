@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget19022022/model/todo_model.dart';
 class DemoListView extends StatefulWidget {
 
   @override
@@ -6,6 +8,8 @@ class DemoListView extends StatefulWidget {
 }
 
 class _DemoListViewState extends State<DemoListView> {
+
+  final List<ToDoModel> mListTodos = ToDoModel.getMock();
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +19,27 @@ class _DemoListViewState extends State<DemoListView> {
       ),
       body: Container(
         child: ListView.separated(
-          itemCount: 10,
+          itemCount: mListTodos.length,
           itemBuilder: (context , position){
-            return Text("View $position");
+            return itemListView(mListTodos[position]);
           },
           separatorBuilder: (context , position){
-            return SizedBox(height: 10,);
+            return const SizedBox(height: 10,);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget itemListView(ToDoModel toDoModel){
+    return Card(
+      child: ListTile(
+        title: Text(toDoModel.title),
+        subtitle: Text(toDoModel.description),
+        trailing: IconButton(
+          icon: Icon(Icons.delete , color: Colors.red,),
+          onPressed: (){
+
           },
         ),
       ),

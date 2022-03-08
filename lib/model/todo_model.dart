@@ -15,7 +15,7 @@ class ToDoModel {
     return List.generate(10, (index) {
       return ToDoModel(
           title: "Title ${index + 1}",
-          description: "Do something ${index + 1}");
+          description: "Do something ${index + 1} ");
     });
   }
 }
