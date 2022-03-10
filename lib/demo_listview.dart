@@ -25,56 +25,7 @@ class _DemoListViewState extends State<DemoListView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context){
-                return Dialog(
-                  child: Container(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10 ,horizontal: 5),
-                          child: Text("Add New Work" , style: TextStyle(fontWeight: FontWeight.bold , fontSize: 20),),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10 ,horizontal: 5),
-                          child: TextField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: "Title"
-                            ),
-                            maxLines: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10 ,horizontal: 5),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: "Description"
-                            ),
-                            maxLines: 5,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          height: MediaQuery.of(context).size.height / 18,
-                          color: Colors.teal,
-                          child: ElevatedButton(
-                            onPressed: (){
-
-                            },
-                            child: Text("Save"),
-                          )
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              }
-          );
+          showInsertDialog(context,list: listToDo);
         },
         child: Icon(Icons.add_outlined),
       ),
@@ -110,5 +61,71 @@ class _DemoListViewState extends State<DemoListView> {
     );
   }
 
+  void showInsertDialog(BuildContext context ,{List<ToDoModel>? list}){
+    TextEditingController titleController = TextEditingController();
+    TextEditingController descriptionController = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (context){
+          return Dialog(
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10 ,horizontal: 5),
+                    child: Text("Add New Work" , style: TextStyle(fontWeight: FontWeight.bold , fontSize: 20),),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10 ,horizontal: 5),
+                    child: TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: "Title"
+                      ),
+                      maxLines: 1,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10 ,horizontal: 5),
+                    child: TextField(
+                      controller: descriptionController,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: "Description"
+                      ),
+                      maxLines: 5,
+                    ),
+                  ),
+                  Container(
+                      margin: EdgeInsets.only(top: 10),
+                      height: MediaQuery.of(context).size.height / 18,
+                      color: Colors.teal,
+                      child: ElevatedButton(
+                        onPressed: (){
+                          String title = titleController.text.toString();
+                          String description = descriptionController.text.toString();
+
+                          if(title.isEmpty || description.isEmpty){
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Title or description is empty")));
+                            return;
+                          }
+                          setState(() {
+                            list?.add(ToDoModel(title: title, description: description));
+                            Navigator.pop(context);
+                          });
+                        },
+                        child: Text("Save"),
+                      )
+                  )
+                ],
+              ),
+            ),
+          );
+        }
+    );
+  }
 
 }
