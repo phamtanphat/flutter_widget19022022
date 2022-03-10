@@ -35,7 +35,7 @@ class _DemoListViewState extends State<DemoListView> {
           itemCount: listToDo.length,
           itemBuilder: (context , position){
             if(listToDo.isNotEmpty){
-              return itemListView(listToDo[position]);
+              return itemListView(listToDo[position] , list: listToDo);
             }
             return SizedBox();
           },
@@ -47,7 +47,7 @@ class _DemoListViewState extends State<DemoListView> {
     );
   }
 
-  Widget itemListView(ToDoModel toDoModel){
+  Widget itemListView(ToDoModel toDoModel , {List<ToDoModel>? list}){
     return Card(
       child: ListTile(
         title: Text(toDoModel.title),
@@ -55,7 +55,7 @@ class _DemoListViewState extends State<DemoListView> {
         trailing: IconButton(
           icon: Icon(Icons.delete , color: Colors.red,),
           onPressed: (){
-            showDeleteDialog(context ,toDoModel);
+            showDeleteDialog(context ,toDoModel , list: list);
           },
         ),
       ),
@@ -131,7 +131,7 @@ class _DemoListViewState extends State<DemoListView> {
     );
   }
 
-  void showDeleteDialog(BuildContext context , ToDoModel model){
+  void showDeleteDialog(BuildContext context , ToDoModel model ,{List<ToDoModel>? list}){
     if(Platform.isAndroid){
       showDialog<void>(
         context: context,
@@ -162,7 +162,10 @@ class _DemoListViewState extends State<DemoListView> {
               CupertinoDialogAction(
                 child: Text('OK'),
                 onPressed: () {
-                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                  setState(() {
+                    list?.remove(model);
+                    Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                  });
                 },
               ),
             ],
