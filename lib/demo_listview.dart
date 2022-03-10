@@ -9,7 +9,13 @@ class DemoListView extends StatefulWidget {
 
 class _DemoListViewState extends State<DemoListView> {
 
-  final List<ToDoModel> mListTodos = ToDoModel.getMock();
+  late List<ToDoModel> listToDo;
+
+  @override
+  void initState() {
+    super.initState();
+    listToDo = [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +23,69 @@ class _DemoListViewState extends State<DemoListView> {
       appBar: AppBar(
         title: Text("Demo Listview"),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context){
+                return Dialog(
+                  child: Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10 ,horizontal: 5),
+                          child: Text("Add New Work" , style: TextStyle(fontWeight: FontWeight.bold , fontSize: 20),),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10 ,horizontal: 5),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: "Title"
+                            ),
+                            maxLines: 1,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10 ,horizontal: 5),
+                          child: TextField(
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: "Description"
+                            ),
+                            maxLines: 5,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 10),
+                          height: MediaQuery.of(context).size.height / 18,
+                          color: Colors.teal,
+                          child: ElevatedButton(
+                            onPressed: (){
+
+                            },
+                            child: Text("Save"),
+                          )
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              }
+          );
+        },
+        child: Icon(Icons.add_outlined),
+      ),
       body: Container(
         child: ListView.separated(
-          itemCount: mListTodos.length,
+          itemCount: listToDo.length,
           itemBuilder: (context , position){
-            return itemListView(mListTodos[position]);
+            if(listToDo.isNotEmpty){
+              return itemListView(listToDo[position]);
+            }
+            return SizedBox();
           },
           separatorBuilder: (context , position){
             return const SizedBox(height: 10,);
@@ -45,4 +109,6 @@ class _DemoListViewState extends State<DemoListView> {
       ),
     );
   }
+
+
 }
