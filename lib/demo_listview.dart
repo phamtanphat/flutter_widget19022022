@@ -89,6 +89,7 @@ class _DemoListViewState extends State<DemoListView> {
   Widget itemListView(ToDoModel toDoModel , {List<ToDoModel?>? list}){
     return Card(
       child: ListTile(
+        leading: Image.asset("assets/images/image.jpeg" , fit: BoxFit.fill,),
         title: Text(toDoModel.title),
         subtitle: Text(toDoModel.description),
         trailing: IconButton(
