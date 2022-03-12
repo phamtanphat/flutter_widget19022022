@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +11,33 @@ class DemoListView extends StatefulWidget {
 
 class _DemoListViewState extends State<DemoListView> {
 
-  late List<ToDoModel> listToDo;
-
+  List<ToDoModel?> listToDo = ToDoModel.getMock();
+  late ScrollController listViewController;
+  bool isLoading = false;
+  StreamController<bool> isShowLoading = StreamController();
   @override
   void initState() {
     super.initState();
-    listToDo = [];
+    listViewController = ScrollController()..addListener(handleScrolling);
+    isShowLoading.add(false);
+  }
+
+  void handleScrolling() {
+    if (listViewController.offset >= listViewController.position.maxScrollExtent && !isLoading) {
+      listToDo.removeAt(listToDo.length - 1);
+      isLoading = true;
+      isShowLoading.add(true);
+      Future.delayed(Duration(seconds: 5),(){
+        setState(() {
+          listToDo.addAll(List.generate(10, (index){
+            return ToDoModel(title: "Title ${index + listToDo.length + 1}", description: "Do something ${index + listToDo.length + 1} ");
+          }));
+          isLoading = false;
+          isShowLoading.add(false);
+          listToDo.add(null);
+        });
+      });
+    }
   }
 
   @override
@@ -31,23 +53,40 @@ class _DemoListViewState extends State<DemoListView> {
         child: Icon(Icons.add_outlined),
       ),
       body: Container(
-        child: ListView.separated(
-          itemCount: listToDo.length,
-          itemBuilder: (context , position){
-            if(listToDo.isNotEmpty){
-              return itemListView(listToDo[position] , list: listToDo);
-            }
-            return SizedBox();
-          },
-          separatorBuilder: (context , position){
-            return const SizedBox(height: 10,);
-          },
+        child: Stack(
+          children: [
+            ListView.separated(
+              controller: listViewController,
+              itemCount: listToDo.length,
+              itemBuilder: (context , position){
+                if(listToDo[position] == null){
+                  return Center(child: CircularProgressIndicator());
+                }else if(listToDo.isNotEmpty){
+                  return itemListView(listToDo[position]! , list: listToDo);
+                }
+                return SizedBox();
+              },
+              separatorBuilder: (context , position){
+                return const SizedBox(height: 10,);
+              },
+            ),
+            StreamBuilder(
+              stream: isShowLoading.stream,
+              builder: (context,snapshot){
+                print(snapshot.data);
+                if(snapshot.data == false){
+                  return SizedBox();
+                }
+                return Center(child: CircularProgressIndicator(),);
+              },
+            )
+          ],
         ),
       ),
     );
   }
 
-  Widget itemListView(ToDoModel toDoModel , {List<ToDoModel>? list}){
+  Widget itemListView(ToDoModel toDoModel , {List<ToDoModel?>? list}){
     return Card(
       child: ListTile(
         title: Text(toDoModel.title),
@@ -62,7 +101,7 @@ class _DemoListViewState extends State<DemoListView> {
     );
   }
 
-  void showInsertDialog(BuildContext context ,{List<ToDoModel>? list}){
+  void showInsertDialog(BuildContext context ,{List<ToDoModel?>? list}){
     TextEditingController titleController = TextEditingController();
     TextEditingController descriptionController = TextEditingController();
     showDialog(
@@ -131,7 +170,7 @@ class _DemoListViewState extends State<DemoListView> {
     );
   }
 
-  void showDeleteDialog(BuildContext context , ToDoModel model ,{List<ToDoModel>? list}){
+  void showDeleteDialog(BuildContext context , ToDoModel model ,{List<ToDoModel?>? list}){
     if(Platform.isAndroid){
       showDialog<void>(
         context: context,
@@ -143,7 +182,10 @@ class _DemoListViewState extends State<DemoListView> {
               TextButton(
                 child: Text('ok'),
                 onPressed: () {
-                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                  setState(() {
+                    list?.remove(model);
+                    Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                  }); // Dismiss alert dialog
                 },
               ),
             ],
@@ -172,5 +214,11 @@ class _DemoListViewState extends State<DemoListView> {
           );
         },
     );
+  }
+  
+  @override
+  void dispose() {
+    super.dispose();
+    listViewController.removeListener(handleScrolling);
   }
 }

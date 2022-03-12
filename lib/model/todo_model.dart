@@ -11,8 +11,11 @@ class ToDoModel {
     return 'ToDoModel{title: $title, description: $description}';
   }
 
-  static List<ToDoModel> getMock() {
-    return List.generate(10, (index) {
+  static List<ToDoModel?> getMock() {
+    return List.generate(11, (index) {
+      if(index == 10){
+        return null;
+      }
       return ToDoModel(
           title: "Title ${index + 1}",
           description: "Do something ${index + 1} ");
